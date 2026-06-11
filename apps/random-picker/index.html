@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>랜덤 뽑기</title>
-  <meta name="description" content="이름이나 항목을 입력하면 무작위로 하나를 뽑아주는 도구">
+  <meta name="title" content="Random Picker">
+  <meta property="og:title" content="Random Picker">
+  <meta property="og:site_name" content="Random Picker">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Random Picker">
+  <title>Random Picker</title>
   <style>
     :root {
       color-scheme: dark;
@@ -116,6 +121,10 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       opacity: 0.76;
+    }
+
+    .kicker[hidden] {
+      display: none;
     }
 
     .winner-stage {
@@ -235,6 +244,107 @@
       cursor: default;
     }
 
+    .winner[hidden] {
+      display: none;
+    }
+
+    .starter-form {
+      width: min(720px, 90vw);
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+      animation: winner-enter 680ms cubic-bezier(0.2, 0.9, 0.22, 1.18) both;
+    }
+
+    .starter-form[hidden] {
+      display: none;
+    }
+
+    .starter-title {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-family: "Bricolage Grotesque", ui-rounded, "Arial Rounded MT Bold", ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(56px, 11vw, 132px);
+      font-weight: 950;
+      line-height: 0.88;
+      letter-spacing: 0;
+      text-shadow:
+        0 0 30px rgba(210, 187, 255, 0.5),
+        0 0 90px rgba(124, 58, 237, 0.36);
+    }
+
+    .starter-label {
+      color: rgba(210, 187, 255, 0.7);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .starter-controls {
+      width: 100%;
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+    }
+
+    .starter-input {
+      min-height: 58px;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .starter-input {
+      width: 100%;
+      border: 1px solid rgba(210, 187, 255, 0.24);
+      background: rgba(6, 14, 32, 0.6);
+      color: var(--text);
+      box-shadow:
+        inset 0 0 26px rgba(137, 206, 255, 0.06),
+        0 0 44px rgba(124, 58, 237, 0.14);
+      padding: 0 18px;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: clamp(20px, 4vw, 34px);
+      font-weight: 850;
+      letter-spacing: 0;
+      text-align: center;
+      outline: none;
+    }
+
+    .starter-input::placeholder {
+      color: rgba(218, 226, 253, 0.32);
+    }
+
+    .starter-input:focus {
+      border-color: rgba(137, 206, 255, 0.58);
+      box-shadow:
+        inset 0 0 30px rgba(137, 206, 255, 0.1),
+        0 0 30px rgba(124, 58, 237, 0.28);
+    }
+
+    .starter-button {
+      border: 0;
+      background: transparent;
+      color: rgba(210, 187, 255, 0.9);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: 0.16em;
+      cursor: pointer;
+      padding: 4px 2px;
+      text-transform: uppercase;
+      transition: transform 160ms ease, color 160ms ease, filter 160ms ease;
+    }
+
+    .starter-button:hover,
+    .starter-button:focus-visible {
+      color: #fff0b6;
+      outline: none;
+      transform: translateY(-1px);
+      filter: drop-shadow(0 0 18px rgba(124, 58, 237, 0.42));
+    }
+
     .winner-copy-status {
       min-height: 18px;
       margin: -14px 0 0;
@@ -257,14 +367,10 @@
       display: none;
       width: min(560px, 100%);
       margin: 0;
-      padding: 14px 16px;
-      border: 1px solid rgba(255, 180, 171, 0.24);
-      border-radius: 8px;
-      background: rgba(147, 0, 10, 0.24);
-      color: #ffdad6;
-      font-size: 14px;
+      padding: 0 16px;
+      color: rgba(218, 226, 253, 0.68);
+      font-size: 13px;
       line-height: 1.5;
-      backdrop-filter: blur(18px);
     }
 
     .error.is-visible {
@@ -611,6 +717,19 @@
         font-size: clamp(112px, 42vw, 210px);
       }
 
+      .starter-controls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .starter-input {
+        min-height: 54px;
+      }
+
+      .starter-title {
+        margin-bottom: 2px;
+      }
+
       .info-dock {
         width: min(100% - 32px, 520px);
         padding-bottom: 30px;
@@ -642,10 +761,18 @@
   <div class="page">
     <main class="hero">
       <section class="winner-section" aria-live="polite">
-        <p class="kicker">The Chosen One</p>
+        <p id="result-kicker" class="kicker">The Chosen One</p>
         <div class="winner-stage">
           <div class="halo" aria-hidden="true"></div>
           <button id="winner" class="winner" type="button" aria-label="당첨자 복사" disabled>-</button>
+          <form id="starter-form" class="starter-form" autocomplete="off" hidden>
+            <h1 class="starter-title">Random Picker</h1>
+            <label class="starter-label" for="starter-names">Enter names</label>
+            <div class="starter-controls">
+              <input id="starter-names" class="starter-input" name="names" type="text" placeholder="a,b,c" aria-describedby="error">
+              <button class="starter-button" type="submit">PICK!</button>
+            </div>
+          </form>
         </div>
         <p id="winner-copy-status" class="winner-copy-status" aria-live="polite"></p>
         <p id="error" class="error"></p>
@@ -702,6 +829,9 @@
       exampleWithDate: document.querySelector("#example-with-date"),
       names: document.querySelector("#names"),
       copyStatus: document.querySelector("#copy-status"),
+      resultKicker: document.querySelector("#result-kicker"),
+      starterForm: document.querySelector("#starter-form"),
+      starterNames: document.querySelector("#starter-names"),
       usageCard: document.querySelector(".usage-card"),
       usageSummary: document.querySelector(".usage-title"),
       winner: document.querySelector("#winner"),
@@ -857,19 +987,22 @@
       els.winnerCopyStatus.classList.remove("is-visible");
       els.winner.textContent = "-";
       els.winner.disabled = true;
+      els.winner.hidden = true;
       els.winner.setAttribute("aria-label", "당첨자 없음");
+      els.resultKicker.hidden = true;
+      els.starterForm.hidden = false;
       els.date.textContent = todayInLocalTime();
       els.count.textContent = "0";
       els.names.innerHTML = "";
       renderExamples(["a", "b", "c", "d"], todayInLocalTime());
-      document.title = "랜덤 뽑기";
+      document.title = "Random Picker";
     }
 
     function render() {
       const { date, dateWasMissing, names } = parseInput();
 
       if (names.length === 0) {
-        renderError("URL에 이름을 콤마로 구분해서 넣어주세요. 예: random-picker.html?names=a,b,c,d&date=2026-06-11");
+        renderError("URL에 이름이 없어요. 후보를 콤마로 입력하고 해보기 버튼을 누르면 새 창에서 뽑기가 열립니다.");
         return false;
       }
 
@@ -878,6 +1011,9 @@
       const winner = pickWinner(names, date);
 
       els.error.classList.remove("is-visible");
+      els.starterForm.hidden = true;
+      els.resultKicker.hidden = false;
+      els.winner.hidden = false;
       els.winner.textContent = winner;
       els.winner.disabled = false;
       els.winner.setAttribute("aria-label", `당첨자 ${winner} 복사`);
@@ -895,6 +1031,23 @@
       );
 
       return true;
+    }
+
+    function normalizeNamesInput(value) {
+      return value
+        .split(",")
+        .map((name) => name.trim())
+        .filter(Boolean);
+    }
+
+    function showStarterMessage(message) {
+      els.error.textContent = message;
+      els.error.classList.add("is-visible");
+    }
+
+    function buildNamesUrl(names) {
+      const namesPart = names.map((name) => encodeURIComponent(name)).join(",");
+      return `${getBaseUrl()}?names=${namesPart}`;
     }
 
     function formatWinnerCopyText(winner) {
@@ -960,6 +1113,29 @@
       } catch {
         showWinnerCopyStatus("복사 실패");
       }
+    });
+
+    els.starterForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const names = normalizeNamesInput(els.starterNames.value);
+
+      if (names.length === 0) {
+        showStarterMessage("이름을 하나 이상 입력해주세요. 예: a,b,c");
+        els.starterNames.focus();
+        return;
+      }
+
+      const nextUrl = buildNamesUrl(names);
+      const opened = window.open(nextUrl, "_blank");
+
+      if (opened) {
+        opened.opener = null;
+        showStarterMessage("새 창에서 뽑기를 열었어요.");
+        return;
+      }
+
+      showStarterMessage("새 창이 차단됐어요. 팝업 허용 후 다시 눌러주세요.");
     });
 
     document.querySelectorAll(".copy-button").forEach((button) => {
