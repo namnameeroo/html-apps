@@ -1,0 +1,6 @@
+# 생성물 — CI(및 로컬 build)가 만들므로 커밋하지 않는다
+/index.html
+
+# OS / 의존성
+.DS_Store
+node_modules/

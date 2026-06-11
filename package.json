@@ -1,0 +1,11 @@
+{
+  "name": "html-apps",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "간단한 HTML 앱 모음 monorepo",
+  "scripts": {
+    "build": "node scripts/build-index.mjs",
+    "serve": "node scripts/build-index.mjs && python3 -m http.server 8000"
+  }
+}
