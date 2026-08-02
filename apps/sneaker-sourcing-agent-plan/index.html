@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>신발 소싱 에이전트 · 기획 문서</title>
+<style>
+  :root{
+    --font-sans:'Pretendard','Inter',-apple-system,BlinkMacSystemFont,system-ui,'Malgun Gothic',sans-serif;
+    --font-mono:'SF Mono',ui-monospace,'Menlo',monospace;
+    --text-primary:#16181d; --text-secondary:#4a5160; --text-muted:#8a92a3; --text-accent:#4f46e5;
+    --surface-raised:#ffffff; --surface-subtle:#f7f8fa; --surface-accent:#eef2ff;
+    --border:#e6e8ee; --border-strong:#d3d7e0;
+    --danger:#b42318; --success:#067647; --warning:#b54708; --maxw:920px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-sans);color:var(--text-primary);background:#eceef2;line-height:1.65;font-size:15.5px}
+  .page{max-width:var(--maxw);margin:0 auto;background:var(--surface-raised);padding:56px 64px 80px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  header.doc{border-bottom:2px solid var(--text-primary);padding-bottom:22px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-accent);font-weight:700;margin:0 0 8px}
+  h1{font-size:30px;line-height:1.25;margin:0 0 10px;font-weight:800;letter-spacing:-.01em}
+  .subtitle{font-size:16px;color:var(--text-secondary);margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:16px;font-size:13px;color:var(--text-muted)}
+  .meta b{color:var(--text-secondary);font-weight:600}
+  h2{font-size:20px;font-weight:800;margin:44px 0 6px;letter-spacing:-.01em;padding-top:14px}
+  h2 .num{color:var(--text-accent);margin-right:10px}
+  h3{font-size:15.5px;font-weight:700;margin:24px 0 4px}
+  p{margin:10px 0}
+  .lead{font-size:16px;color:var(--text-secondary)}
+  a{color:var(--text-accent)}
+  code{font-family:var(--font-mono);font-size:.86em;background:var(--surface-subtle);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--surface-subtle);font-weight:700;color:var(--text-secondary);border-bottom:1px solid var(--border-strong);font-size:12.5px}
+  tr td:first-child{white-space:nowrap}
+  .fig{margin:20px 0;border:1px solid var(--border);border-radius:12px;padding:18px 18px 10px;background:var(--surface-subtle)}
+  .fig svg{width:100%;height:auto;display:block}
+  .fig figcaption{font-size:12.5px;color:var(--text-muted);margin-top:8px;text-align:center}
+  .callout{border-left:3px solid var(--text-accent);background:var(--surface-accent);padding:14px 18px;border-radius:0 8px 8px 0;margin:18px 0;font-size:14.5px}
+  .callout b{color:var(--text-accent)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .card{border:1px solid var(--border-strong);border-radius:10px;padding:14px 16px;background:var(--surface-raised)}
+  .card h4{margin:0 0 6px;font-size:14px;font-weight:700}
+  .card p{margin:0;font-size:13.5px;color:var(--text-secondary)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+  .pill.strong{background:#e7f6ee;color:var(--success)} .pill.mid{background:#fff4e5;color:var(--warning)} .pill.weak{background:#fdeceb;color:var(--danger)}
+  .pill.p0{background:#fdeceb;color:var(--danger)} .pill.p1{background:#fff4e5;color:var(--warning)} .pill.p2{background:var(--surface-subtle);color:var(--text-muted);border:1px solid var(--border-strong)}
+  ol,ul{margin:10px 0;padding-left:22px} li{margin:5px 0}
+  .toc{background:var(--surface-subtle);border:1px solid var(--border);border-radius:10px;padding:16px 22px;margin:24px 0;font-size:14px;columns:2;column-gap:36px}
+  .toc a{text-decoration:none;color:var(--text-secondary)} .toc a:hover{color:var(--text-accent)}
+  hr{border:none;border-top:1px solid var(--border);margin:40px 0 0}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  /* wireframe (scoped) */
+  .wf-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+  .wf-wrap .wf{border:1.5px solid var(--border-strong);border-radius:10px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+  .wf-wrap .wf-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1.5px solid var(--border-strong);background:#eef0f4}
+  .wf-wrap .wf-bar i{width:9px;height:9px;border-radius:50%;background:var(--border-strong);display:inline-block}
+  .wf-wrap .wf-bar b{margin-left:8px;font-size:12.5px;font-weight:700}
+  .wf-wrap .wf-tag{margin-left:auto;font-size:10px;font-weight:700;color:var(--text-accent);background:var(--surface-accent);padding:2px 7px;border-radius:10px}
+  .wf-wrap .wf-body{padding:14px;display:flex;flex-direction:column;gap:9px;flex:1}
+  .wf-wrap .lab{font-size:10.5px;color:var(--text-muted);letter-spacing:.03em;text-transform:uppercase;font-weight:700}
+  .wf-wrap .fld{border:1.4px dashed var(--border-strong);border-radius:7px;padding:8px 10px;font-size:12.5px;color:var(--text-secondary);background:#fafbfc}
+  .wf-wrap .fld.val{border-style:solid;color:var(--text-primary);font-weight:600}
+  .wf-wrap .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .wf-wrap .btn{margin-top:2px;text-align:center;padding:11px;border-radius:8px;background:var(--text-accent);color:#fff;font-weight:700;font-size:13px}
+  .wf-wrap .note{font-size:11px;color:var(--text-accent);background:var(--surface-accent);border-radius:6px;padding:6px 9px;line-height:1.4}
+  .wf-wrap .gauge{height:14px;border-radius:8px;background:#eef0f4;overflow:hidden;border:1px solid var(--border-strong)}
+  .wf-wrap .gauge>span{display:block;height:100%;width:64%;background:var(--text-accent)}
+  .wf-wrap .feed{display:flex;flex-direction:column;gap:6px}
+  .wf-wrap .fitem{display:flex;gap:8px;align-items:center;font-size:11.5px;border:1px solid var(--border-strong);border-radius:6px;padding:6px 8px;background:#fafbfc}
+  .wf-wrap .fitem .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .wf-wrap .win{color:var(--success)} .wf-wrap .win .dot{background:var(--success)}
+  .wf-wrap .lose{color:var(--text-muted)} .wf-wrap .lose .dot{background:var(--text-muted)}
+  .wf-wrap .ai{color:var(--text-accent)} .wf-wrap .ai .dot{background:var(--text-accent)}
+  .wf-wrap .card-item{display:flex;gap:10px;align-items:center;border:1.4px solid var(--border-strong);border-radius:8px;padding:10px}
+  .wf-wrap .thumb{width:48px;height:48px;border-radius:6px;background:#eef0f4;border:1px dashed var(--border-strong);flex:none}
+  .wf-wrap .kv{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--border-strong)}
+  .wf-wrap .steps{display:flex;gap:6px;align-items:center;font-size:10.5px;color:var(--text-secondary)}
+  .wf-wrap .steps .s{flex:1;text-align:center;border:1px solid var(--border-strong);border-radius:6px;padding:5px 2px;background:#fafbfc}
+  .wf-wrap .steps .s.on{border-color:var(--text-accent);color:var(--text-accent);font-weight:700;background:var(--surface-accent)}
+  .wf-wrap .tx{font-family:var(--font-mono);font-size:11px;color:var(--text-accent);background:var(--surface-accent);border-radius:6px;padding:6px 9px;display:flex;justify-content:space-between}
+  .wf-wrap .sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+  .wf-wrap .sum>div{border:1.2px solid var(--border-strong);border-radius:7px;padding:8px 4px}
+  .wf-wrap .sum b{display:block;font-size:16px;font-weight:800} .wf-wrap .sum span{font-size:9.5px;color:var(--text-muted)}
+  .wf-wrap .kill{border:1.5px solid var(--danger);background:#fdeceb;border-radius:8px;padding:9px 11px;font-size:11.5px;color:var(--danger);font-weight:600;line-height:1.45}
+  @media print{body{background:#fff}.page{box-shadow:none;max-width:none;padding:0}}
+  @media(max-width:680px){.page{padding:32px 20px}.grid,.toc,.wf-wrap{grid-template-columns:1fr;columns:1}}
+</style>
+</head>
+<body>
+<main class="page">
+
+<header class="doc">
+  <p class="eyebrow">Product & Build Spec · 팀 내부용</p>
+  <h1>신발 소싱 에이전트 &amp; 낙찰 플랫폼</h1>
+  <p class="subtitle">리셀러를 대신해 2차 시장 경매에서 자율 입찰·낙찰·정산하는 Agentic Commerce 제품</p>
+  <div class="meta">
+    <span><b>대회</b> Google Cloud AI × Solana Agentic 해커톤</span>
+    <span><b>테마</b> Build the Future of Agentic Commerce</span>
+    <span><b>구현 예산</b> 12H</span>
+    <span><b>버전</b> v1.0</span>
+    <span><b>작성일</b> 2026-08-02</span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="목차">
+  <a href="#s1">1. 개요 &amp; 문제 정의</a><br>
+  <a href="#s2">2. 타겟 &amp; 페르소나</a><br>
+  <a href="#s3">3. 대회 적합성 · 심사기준 매핑</a><br>
+  <a href="#s4">4. 시스템 아키텍처</a><br>
+  <a href="#s5">5. 에이전트별 역할·책임</a><br>
+  <a href="#s6">6. A2A 전략</a><br>
+  <a href="#s7">7. 프로토콜 구현 상태 &amp; 방향</a><br>
+  <a href="#s8">8. 데모 유저 시나리오</a><br>
+  <a href="#s9">9. 와이어프레임</a><br>
+  <a href="#s10">10. 구현 우선순위 백로그</a><br>
+  <a href="#s11">11. 리스크 &amp; 대응</a><br>
+  <a href="#s12">12. MVP 스코프 경계</a>
+</nav>
+
+<section id="s1">
+<h2><span class="num">1</span>개요 &amp; 문제 정의</h2>
+<p class="lead">전업·준프로 신발 리셀러는 매입 수익을 위해 여러 2차 시장 경매와 매물을 24시간 모니터링하며 입찰한다. 동시에 뜨는 경매를 사람이 건별로 판단·입찰·결제하는 건 노동 집약적이고, 놓친 매물은 곧 기회비용이다.</p>
+<p><b>제품 정의.</b> "매물을 추천해주는 툴"이 아니라, <b>리셀러가 예산·조건만 걸면 2차 시장 경매에서 시세를 판단해 자율로 입찰·낙찰하고, 낙찰 즉시 온체인으로 정산까지 실행하는 소싱 에이전트</b>다. 사람은 예산 한도와 조건만 한 번 승인하고, 이후 탐색·가치평가·입찰·낙찰·정산은 에이전트가 사람 승인 없이 한도 내에서 실행한다.</p>
+<div class="callout">
+<b>왜 이 도메인인가.</b> ① 실시간 경매는 사람이 건별 승인 물리적으로 불가 → 자율 결제의 자명한 명분. ② 신발은 <b>시세 comps가 명확</b>(체결 이력·모델·사이즈)해서 AI의 "공정가 판단"이 검증가능. ③ 소액~중액 다건이라 데모 중 트랜잭션이 다수 발생.
+</div>
+<div class="callout" style="border-left-color:var(--warning);background:#fff8ef">
+<b style="color:var(--warning)">범위 못박기.</b> "나이키 SNKRS 드랍 스나이핑"이 아니다. 그건 결제가 리테일 체크아웃이라 낙찰+USDC 정산 구조가 깨진다. 반드시 <b>2차 시장 경매/매물 소싱</b>으로 좁혀야 결제 인프라가 네이티브하게 붙는다.
+</div>
+
+<h3>시장 구조 · 리셀러는 왜 서로 거래하나</h3>
+<p><b>근본 수요는 의도된 희소성이다.</b> 브랜드(조던·아디다스·뉴발란스 협업 등)는 하이프 모델을 일부러 적게 생산한다. 수요는 많은데 발매 물량이 적어 정가에서 시장이 청산되지 않고, 이 <b>정가와 시장가의 갭</b>이 리셀 프리미엄이 된다. 발매(1차 시장) 물량은 추첨·봇·대기열로 접근 자체가 제약되므로, 한 켤레를 확보하는 것 자체가 가치다.</p>
+<p>리셀러는 소비자뿐 아니라 <b>서로(2차 시장)도 거래</b>하는데, 이유는 다음과 같다:</p>
+<ul>
+<li><b>차익거래.</b> 같은 신발이 플랫폼·지역·사이즈마다 가격이 달라, 저평가 매물을 사서 비싼 곳에 되판다.</li>
+<li><b>사이즈·재고 리밸런싱.</b> 안 팔리는 사이즈를 그 수요가 있는 다른 리셀러에게 넘겨 현금화한다.</li>
+<li><b>볼륨 소싱.</b> 전업 리셀러는 발매만으로 물량이 안 되므로, 다른 리셀러·딜러·창고정리에서 대량 매입해 재고를 채운다.</li>
+<li><b>투기·타이밍.</b> 발매 직후 가격이 꺼졌다가 오르는 모델을 쌀 때 사서 보유 후 판다 — 신발을 자산처럼 운용.</li>
+<li><b>유동성.</b> 작은 마진에 빨리 털어 자본을 회전시키려는 리셀러의 매물을, 여유 자본 있는 리셀러가 받는다.</li>
+</ul>
+<p>결국 리셀러의 수익 원천은 <b>정보</b>(진짜 시장가를 앎)·<b>접근</b>(희소 물량 확보)·<b>자본</b>(볼륨 매입·보유)·<b>속도</b>(저평가 매물 선점)·<b>신뢰</b>(정품 검수 프리미엄) 중 남보다 나은 우위에서 나온다.</p>
+
+<h3>제품의 수익 논리</h3>
+<p>StockX·GOAT·크림 등이 체결 시세(comps)를 공개하므로 "공정가"가 계산 가능하다. 따라서 본 에이전트의 돈 버는 논리는 명확하다:</p>
+<div class="callout">
+<b>comps로 공정가를 판단 → 그보다 싸게 올라온 매물을 자율 입찰로 선점 → 시장가에 재판매해 마진.</b> 즉 제품은 리셀러 수익 원천 중 <b>정보(공정가 판단)와 속도(24시간 선점)를 자동화</b>한다. "여러 경매를 사람이 못 지켜봐 놓치는 저평가 매물"이 곧 타겟 수요다.
+</div>
+</section>
+
+<section id="s2">
+<h2><span class="num">2</span>타겟 &amp; 페르소나</h2>
+<p><b>1차 타겟:</b> 2차 시장에서 볼륨으로 소싱하는 <b>준프로·전업 리셀러</b>. 이들은 예산=운영자본 개념이 명확하고, 시세 판단이 본업 스킬이라 AI가 대체할 가치가 크며, 다건 소싱이라 자율화 효과가 즉시 체감된다.</p>
+<div class="grid">
+  <div class="card"><h4>확장 TAM</h4><p>사이드허슬 플리퍼(대중, 소액 다건), 신발=자산 투자자(운영 없이 ROI 추구). 데모에는 관념적이라 확장 서사로만 사용.</p></div>
+  <div class="card"><h4>데모 페르소나 · 전업 리셀러 "지훈"</h4><p>Jordan 1 / 270 / 개당 20만원↓ / 기대 마진 30%↑ / 총예산 500만원 / 24h. 조건을 걸고 자면 에이전트가 밤새 경매를 돌며 자율 소싱.</p></div>
+</div>
+<p>지훈이 거는 조건은 곧 <b>Intent Mandate</b>(§7)이며, 이것이 사람의 유일한 개입 지점이다.</p>
+</section>
+
+<section id="s3">
+<h2><span class="num">3</span>대회 적합성 · 심사기준 매핑</h2>
+<p>미션 <i>"AI Agent가 매 단계 사람 승인 없이, 정해진 한도 내에서 스스로 결제를 처리"</i>를 "사람은 예산·조건만 승인, 나머지 자율 집행" 구조가 그대로 구현한다. 실시간 경매 특성상 자율성 정당화가 자명하고, 다건 소싱이라 라이브 실증(기준 3)에 유리하다.</p>
+<table>
+<thead><tr><th>심사 기준</th><th>본 제품의 대응</th></tr></thead>
+<tbody>
+<tr><td><b>1. AI 활용도</b><br>(Gemini)</td><td>가치평가 에이전트가 Gemini로 시세 comps → 공정가 → 최대입찰가를 산정(검증가능한 판단). (백로그) 낙찰 신발 사진을 Gemini Vision으로 진품·상태 판독해 릴리스 검증.</td></tr>
+<tr><td><b>2. 기술 완성도 ·<br>블록체인/프로토콜</b></td><td>x402 실 왕복 + 위임형 A2A(hop-budget 강제) + AP2 Mandate 권한 게이트가 하나의 결제 파이프라인으로 연결. Solana devnet USDC 정산·에스크로.</td></tr>
+<tr><td><b>3. 실제 구동</b><br>(라이브 txn)</td><td>낙찰 즉시 USDC 에스크로 예치, 검수 통과 시 자동 릴리스. 다건 소싱이라 데모 중 다수 txn 발생 → explorer 로그로 실증.</td></tr>
+<tr><td><b>4. 혁신성 · UX</b></td><td>"추천 챗봇"이 아니라 시세 판단 → 자율 입찰 → 온체인 정산의 자율 파이프라인. 사람의 단일 승인이 N건의 자율 결제로 확장.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="s4">
+<h2><span class="num">4</span>시스템 아키텍처</h2>
+<p>사람은 최상단에서 예산·조건만 승인하고 손을 뗀다. 소싱 에이전트의 4개 하위 에이전트가 승인 없이 자율 실행되며, 셀러 목(mock) 에이전트와 A2A 입찰로 낙찰하고 Solana devnet에서 정산한다.</p>
+<figure class="fig">
+<svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ft fd">
+  <title id="ft">신발 소싱 에이전트 A2A 흐름도</title>
+  <desc id="fd">사람이 예산·조건을 승인하면 소싱 에이전트의 4개 하위 에이전트가 가치평가·자율입찰·정산을 실행하며, 셀러 목 에이전트와 A2A로 낙찰하고 Solana devnet에서 USDC로 정산하는 흐름</desc>
+  <defs>
+    <marker id="arw" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 Z" fill="var(--text-secondary)"/></marker>
+    <marker id="arwA" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 Z" fill="var(--text-accent)"/></marker>
+  </defs>
+  <g font-family="var(--font-sans)">
+  <g font-size="12">
+    <rect x="20" y="16" width="14" height="14" rx="3" fill="var(--surface-accent)" stroke="var(--text-accent)"/>
+    <text x="40" y="27" fill="var(--text-secondary)">자율 실행 (사람 승인 없음)</text>
+    <line x1="230" y1="23" x2="258" y2="23" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="264" y="27" fill="var(--text-secondary)">백로그 (여력 시)</text>
+  </g>
+  <rect x="326" y="48" width="248" height="52" rx="8" fill="var(--surface-raised)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text x="450" y="72" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text-primary)">사람 · 유일한 개입 지점</text>
+  <text x="450" y="90" text-anchor="middle" font-size="11.5" fill="var(--text-secondary)">모델·사이즈·최대가·마진·예산·마감 승인</text>
+  <line x1="450" y1="100" x2="450" y2="126" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <rect x="18" y="128" width="864" height="176" rx="12" fill="var(--surface-subtle)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="34" y="150" font-size="13" font-weight="700" fill="var(--text-primary)">소싱 에이전트 · 자율 실행 파이프라인</text>
+  <rect x="34" y="162" width="196" height="126" rx="9" fill="var(--surface-raised)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text x="46" y="186" font-size="13" font-weight="700" fill="var(--text-primary)">① 예산·정책</text>
+  <text x="46" y="210" font-size="11.5" fill="var(--text-secondary)">조건·한도 확정</text>
+  <text x="46" y="228" font-size="11.5" fill="var(--text-secondary)">입찰 가드레일 정의</text>
+  <text x="46" y="246" font-size="11.5" fill="var(--text-secondary)">Intent Mandate 서명</text>
+  <text x="46" y="276" font-size="10.5" font-style="italic" fill="var(--text-muted)">사람 입력을 정책화</text>
+  <rect x="244" y="162" width="196" height="126" rx="9" fill="var(--surface-accent)" stroke="var(--text-accent)" stroke-width="1.5"/>
+  <text x="256" y="186" font-size="13" font-weight="700" fill="var(--text-primary)">② 가치평가·탐색</text>
+  <text x="256" y="210" font-size="11.5" fill="var(--text-secondary)">매물 스캔</text>
+  <text x="256" y="228" font-size="11.5" fill="var(--text-secondary)">comps → 공정가 산출</text>
+  <text x="256" y="246" font-size="11.5" fill="var(--text-secondary)">최대입찰가 결정</text>
+  <text x="256" y="276" font-size="10.5" font-weight="700" fill="var(--text-accent)">▲ Gemini 활용</text>
+  <rect x="454" y="162" width="196" height="126" rx="9" fill="var(--surface-raised)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text x="466" y="186" font-size="13" font-weight="700" fill="var(--text-primary)">③ 자율입찰·낙찰</text>
+  <text x="466" y="210" font-size="11.5" fill="var(--text-secondary)">경매 입찰 주도</text>
+  <text x="466" y="228" font-size="11.5" fill="var(--text-secondary)">최대입찰가 내 경쟁</text>
+  <text x="466" y="246" font-size="11.5" fill="var(--text-secondary)">예산 내 다건 낙찰</text>
+  <text x="466" y="276" font-size="10.5" font-style="italic" fill="var(--text-muted)">A2A 입찰의 주체</text>
+  <rect x="664" y="162" width="196" height="126" rx="9" fill="var(--surface-accent)" stroke="var(--text-accent)" stroke-width="1.5"/>
+  <text x="676" y="186" font-size="13" font-weight="700" fill="var(--text-primary)">④ 에스크로·정산</text>
+  <text x="676" y="210" font-size="11.5" fill="var(--text-secondary)">USDC 예치(lock)</text>
+  <text x="676" y="228" font-size="11.5" fill="var(--text-secondary)">검수 대기</text>
+  <text x="676" y="246" font-size="11.5" fill="var(--text-secondary)">조건 충족 시 릴리스</text>
+  <text x="676" y="276" font-size="10.5" font-weight="700" fill="var(--text-accent)">▲ Solana 결제</text>
+  <line x1="230" y1="225" x2="244" y2="225" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <line x1="440" y1="225" x2="454" y2="225" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <line x1="650" y1="225" x2="664" y2="225" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <text x="300" y="360" font-size="12" font-weight="700" fill="var(--text-accent)">A2A 입찰 루프</text>
+  <path d="M520,288 L520,404" stroke="var(--text-accent)" stroke-width="1.6" marker-end="url(#arwA)"/>
+  <text x="528" y="350" font-size="11.5" fill="var(--text-accent)">입찰 (bid)</text>
+  <path d="M584,404 L584,288" stroke="var(--text-accent)" stroke-width="1.6" marker-end="url(#arwA)"/>
+  <text x="592" y="350" font-size="11.5" fill="var(--text-accent)">accept / counter / reject</text>
+  <rect x="360" y="406" width="384" height="96" rx="10" fill="var(--surface-raised)" stroke="var(--text-accent)" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="376" y="430" font-size="13" font-weight="700" fill="var(--text-primary)">셀러 목(mock) 에이전트</text>
+  <text x="376" y="452" font-size="11.5" fill="var(--text-secondary)">R&amp;R: 입찰 수신 → reserve가 비교 → accept / counter / reject 반환</text>
+  <text x="376" y="472" font-size="11.5" fill="var(--text-secondary)">데이터: 매물·모델·사이즈·상태·reserve가·시세 (JSON ~30건)</text>
+  <text x="376" y="492" font-size="10.5" font-style="italic" fill="var(--text-muted)">얇은 응답 함수 — 코드 10줄이지만 A2A 서사를 유지</text>
+  <path d="M762,288 L762,548" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <rect x="18" y="550" width="864" height="132" rx="12" fill="var(--surface-subtle)" stroke="var(--border)" stroke-width="1.5"/>
+  <text x="34" y="574" font-size="13" font-weight="700" fill="var(--text-primary)">Solana Devnet · 결제 레이어 (USDC)</text>
+  <rect x="34" y="586" width="250" height="80" rx="9" fill="var(--surface-raised)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text x="46" y="610" font-size="12.5" font-weight="700" fill="var(--text-primary)">에스크로 예치</text>
+  <text x="46" y="632" font-size="11.5" fill="var(--text-secondary)">낙찰 즉시 USDC lock</text>
+  <text x="46" y="652" font-size="11.5" fill="var(--text-secondary)">다건 동시 처리</text>
+  <line x1="284" y1="626" x2="330" y2="626" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <rect x="330" y="586" width="270" height="80" rx="9" fill="var(--surface-raised)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text x="342" y="610" font-size="12.5" font-weight="700" fill="var(--text-primary)">검수 (진품·상태)</text>
+  <text x="342" y="632" font-size="11.5" fill="var(--text-secondary)">MVP: 목 검증(플래그)</text>
+  <text x="342" y="652" font-size="11.5" fill="var(--text-muted)">백로그: Gemini Vision 진품 판독</text>
+  <line x1="600" y1="626" x2="646" y2="626" stroke="var(--text-secondary)" stroke-width="1.5" marker-end="url(#arw)"/>
+  <rect x="646" y="586" width="214" height="80" rx="9" fill="var(--surface-accent)" stroke="var(--text-accent)" stroke-width="1.5"/>
+  <text x="658" y="610" font-size="12.5" font-weight="700" fill="var(--text-primary)">자동 릴리스</text>
+  <text x="658" y="632" font-size="11.5" fill="var(--text-secondary)">검수 통과 → 지급</text>
+  <text x="658" y="652" font-size="11.5" font-weight="700" fill="var(--text-accent)">▲ 라이브 txn 발생</text>
+  </g>
+</svg>
+<figcaption>그림 1. 사람의 단일 승인 → 소싱 에이전트 자율 파이프라인 → A2A 입찰 낙찰 → Solana devnet 정산</figcaption>
+</figure>
+<p><b>세 축 요약.</b> ① <b>세로(사람→자율)</b>: 사람은 예산·조건만 승인, 이하 전체가 승인 없이 자율 — 미션 문구를 시각화. ② <b>가로 파이프라인</b>: 예산·정책 → 가치평가(Gemini) → 자율입찰·낙찰(그리디) → 에스크로·정산(Solana). ③ <b>A2A 입찰 루프</b>: 낙찰 에이전트가 셀러 목 에이전트와 bid/accept/counter를 주고받아 "추천 챗봇"과 갈리는 차별점을 만든다.</p>
+</section>
+
+<section id="s5">
+<h2><span class="num">5</span>에이전트별 역할·책임</h2>
+<table>
+<thead><tr><th>에이전트</th><th>역할</th><th>책임(R&amp;R)</th><th>구현</th></tr></thead>
+<tbody>
+<tr><td><b>① 예산·정책</b></td><td>사람 입력을 정책화</td><td>모델·사이즈·최대가·마진·예산·마감 확정, 입찰 가드레일 정의, Intent Mandate 서명</td><td>진짜 · 사람 개입 지점</td></tr>
+<tr><td><b>② 가치평가·탐색</b></td><td>매물 발굴·시세 판단</td><td>매물 스캔, Gemini로 comps 기반 공정가 산출, 목표 마진 반영해 최대입찰가 결정</td><td>진짜 · <b>Gemini</b></td></tr>
+<tr><td><b>③ 자율입찰·낙찰</b></td><td>A2A 입찰·선정 주체</td><td>셀러 목 에이전트에 입찰 발송, 최대입찰가 내 경쟁, reach/마진 효율 그리디로 예산 내 다건 낙찰</td><td>진짜 · 그리디</td></tr>
+<tr><td><b>④ 에스크로·정산</b></td><td>온체인 결제 집행</td><td>낙찰 즉시 USDC 예치(lock), 검수 대기, 조건 충족 시 자동 릴리스</td><td>진짜 · <b>Solana</b></td></tr>
+<tr><td><b>셀러 목 에이전트</b></td><td>거래 상대(mock)</td><td>입찰 수신 → reserve가 비교 → accept/counter/reject. 데이터는 매물·모델·사이즈·상태·reserve가·시세 JSON(~30건)</td><td>얇은 목 · A2A 서사 유지</td></tr>
+</tbody>
+</table>
+<div class="callout">
+<b>설계 원칙.</b> "진짜로 만드는 것"은 소싱 에이전트 4종 + 온체인 정산에 집중한다. 셀러 측은 정적 카탈로그가 아니라 <b>응답 로직을 가진 얇은 목 에이전트</b>로 둔다 — 코드량은 거의 같지만 "에이전트끼리 입찰 경쟁"이라는 A2A 서사가 살아남는다.
+</div>
+</section>
+
+<section id="s6">
+<h2><span class="num">6</span>A2A 전략</h2>
+<p>"A2A"는 두 층위로 쓰인다. 둘을 분리해야 리소스 배분이 정확해진다. 특히 소싱 경매는 <b>입찰 경쟁이 도메인의 네이티브 기제</b>라 A2A가 억지 없이 붙는다(인플루언서 도메인 대비 강점).</p>
+<div class="grid">
+  <div class="card"><h4>경쟁형 A2A (제품 기제)</h4><p>낙찰 에이전트 ↔ 셀러 목 에이전트가 입찰/재입찰을 주고받는 경매. 목적은 "단방향 선택 = 스마트 쇼핑카트" 비판(기준 4)을 피하는 것. 풀 흥정이 아니라 <b>구조화된 입찰 라운드</b>로 최소 구현.</p></div>
+  <div class="card"><h4>위임형 A2A (인프라, 이미 구현)</h4><p>hop-budget 엔벨로프 + 게이트웨이 권위 hop 카운터 + sender-binding 강제. 다중 홉으로 지출 권한이 위임되며 각 단계에서 한도 초과가 차단됨.</p></div>
+</div>
+<div class="callout">
+<b>도메인 매핑.</b> 위임형 A2A를 소싱 공급망에 붙이면: 리셀러 에이전트 → (소싱 대행/딜러 에이전트) → 개별 셀러 에이전트로 <b>예산 권한이 홉을 타고 내려가고, hop-budget이 각 단계에서 초과 지출을 강제 차단</b>한다. sender-binding 403·hop 초과 400이 데모에서 "권한 위임이 실제로 강제됨"을 보여준다.
+</div>
+<p><b>결론:</b> 경쟁형 A2A는 입찰이 네이티브라 최소 비용으로 성립. 리소스는 코어 JSON-RPC 스펙 완성도보다 <b>위임형 A2A의 도메인 매핑</b>에 투자한다.</p>
+</section>
+
+<section id="s7">
+<h2><span class="num">7</span>프로토콜 구현 상태 &amp; 방향</h2>
+<p>기준 2번은 <i>"차세대 결제 프로토콜(AP2, A2A, x402 <b>등</b>) 연동 구조"</i>로, 예시 나열이지 전부 요구하는 체크리스트가 아니다. 하나를 강하게 실증하면 프로토콜 축은 충족된다.</p>
+<table>
+<thead><tr><th>프로토콜</th><th>상태</th><th>내용 · 방향</th></tr></thead>
+<tbody>
+<tr><td><b>x402</b></td><td><span class="pill strong">충족 (강)</span></td><td>실 402 왕복 — 판매자가 <code>X-Payment</code> 없으면 402 챌린지 반환, 구매자가 amount·expiry 대조 검증 후 서명. <b>방향:</b> nonce/expiry 강제(replay 거부)로 신뢰도 마감.</td></tr>
+<tr><td><b>A2A</b></td><td><span class="pill mid">부분 (중)</span></td><td>hop-budget 엔벨로프 + 권위 hop 카운터 + sender-binding + 서명된 Agent Card 디스커버리 실재. <b>방향:</b> 코어 JSON-RPC 확장 대신 §6 도메인 매핑에 투자.</td></tr>
+<tr><td><b>AP2</b></td><td><span class="pill weak">실구현 예정</span></td><td>현재 Mandate가 서명 없는 객체 → 최대 리스크. <b>방향:</b> 아래 2단 권한 체인으로 실구현.</td></tr>
+</tbody>
+</table>
+<h3>AP2 실구현 방향 (개념)</h3>
+<p>적대적 심사의 "그냥 dict" 지적을 무력화하는 건 AP2가 보장하려는 <b>보안 속성 — 검증가능·부인방지·제약구속 권한위임</b>을 실제로 강제하는 것이다. 완전한 W3C VC/DID 스펙을 쫓지 않고, 이미 있는 Ed25519 JWS를 재사용해 2단 체인을 만든다.</p>
+<div class="grid">
+  <div class="card"><h4>Intent Mandate — 사람이 서명</h4><p>"모델 M, 사이즈 S, 개당 최대가 P, 마진 R%↑, 총 예산 X, 마감 T까지." 사람이 한 번 서명하는 권한의 뿌리. 그림 1의 "사람 · 유일한 개입 지점"을 암호학적으로 실체화한다.</p></div>
+  <div class="card"><h4>Cart(낙찰) Mandate — 에이전트가 서명</h4><p>낙찰 확정 내역 "매물 ID·낙찰가·합계 Y ≤ X". Intent Mandate 해시를 임베드해 권한 출처를 증명(부인방지).</p></div>
+</div>
+<p><b>검증-전-지출(verify-before-spend).</b> 지출 시점(<code>policy.permits()</code>)에서 ① Intent 서명 검증 ② 낙찰이 Intent에서 파생됐는지(해시 바인딩) ③ 낙찰가·모델·마감이 Intent 제약 안인지 확인하고, 하나라도 실패하면 결제를 거부한다. 서사는 <b>"사람의 단 한 번 서명된 승인 → N건의 자율 결제, 각 건이 그 승인에 대해 검증"</b>.</p>
+<div class="callout">
+<b>수용 기준(데모 킬러샷).</b> Mandate를 예산 초과로 변조하면 결제가 실제로 <b>거부</b>되는 장면. "서명이 진짜 검증되고, 실패 시 실제로 막힌다"가 적대적 심사를 무력화하는 유일한 증거다.
+</div>
+</section>
+
+<section id="s8">
+<h2><span class="num">8</span>데모 유저 시나리오</h2>
+<p>데모는 <b>라이브 트랜잭션이 실제로 터지는 것</b>(기준 3)을 중심에 둔다. 큰 딜 1건보다 다건 소싱이 화면에서 강렬하다.</p>
+<ol>
+<li><b>위임(사람의 유일한 개입).</b> 지훈이 "Jordan 1 / 270 / 개당 20만원↓ / 마진 30%↑ / 총예산 500만원 / 24h" 입력 → <code>[에이전트에게 위임]</code> → Intent Mandate 서명 생성.</li>
+<li><b>가치평가.</b> 에이전트가 매물 스캔 → Gemini가 comps로 공정가·최대입찰가 산정(화면에 "공정가 24만 · 최대입찰 21만" 근거 표시).</li>
+<li><b>자율입찰(A2A).</b> 셀러 목 에이전트들에 입찰 발송 → accept/counter/reject 수신 → 예산 내 다건 낙찰. 화면에 입찰 로그 흐름.</li>
+<li><b>정산.</b> 낙찰 즉시 각 건 USDC 에스크로 예치 → (MVP)검수 플래그 → 자동 릴리스. <b>devnet에 txn 다수 발생, explorer 링크로 실증.</b></li>
+<li><b>킬러샷.</b> 예산 초과 입찰을 일부러 시도 → <code>permits()</code>가 Mandate 검증 실패로 결제 거부하는 장면 시연.</li>
+</ol>
+</section>
+
+<section id="s9">
+<h2><span class="num">9</span>와이어프레임</h2>
+<p>4개 화면 저해상도 와이어프레임. 각 화면이 §8 시나리오 단계와 심사 기준에 대응한다.</p>
+<div class="wf-wrap" role="img" aria-label="4개 화면 와이어프레임: 소싱 미션 설정, 라이브 대시보드, 낙찰 정산 상세, 결과 요약">
+  <div class="wf">
+    <div class="wf-bar"><i></i><i></i><i></i><b>① 소싱 미션 설정</b><span class="wf-tag">사람 개입 지점</span></div>
+    <div class="wf-body">
+      <div><div class="lab">모델 · 사이즈</div><div class="fld val">Jordan 1 Chicago · 270</div></div>
+      <div class="row2"><div><div class="lab">최대 개당가</div><div class="fld val">₩200,000</div></div><div><div class="lab">목표 마진</div><div class="fld val">30% ↑</div></div></div>
+      <div class="row2"><div><div class="lab">총 예산</div><div class="fld val">₩5,000,000</div></div><div><div class="lab">마감</div><div class="fld val">24시간</div></div></div>
+      <div class="btn">에이전트에게 위임 · 서명</div>
+      <div class="note">↳ 이 입력이 <b>Intent Mandate</b>로 서명됨. 이후 모든 자율결제의 권한 뿌리.</div>
+    </div>
+  </div>
+  <div class="wf">
+    <div class="wf-bar"><i></i><i></i><i></i><b>② 라이브 대시보드</b><span class="wf-tag">● 자율 실행</span></div>
+    <div class="wf-body">
+      <div><div class="lab">예산 사용 ₩3.2M / ₩5.0M</div><div class="gauge"><span></span></div></div>
+      <div class="lab">실행 피드</div>
+      <div class="feed">
+        <div class="fitem ai"><span class="dot"></span>가치평가: comps 공정가 ₩240k · 최대입찰 ₩210k</div>
+        <div class="fitem win"><span class="dot"></span>입찰 → 낙찰 ✓ ₩195k · Chicago 270</div>
+        <div class="fitem lose"><span class="dot"></span>입찰 → 패찰 ✗ Bred 275 (한도 초과)</div>
+        <div class="fitem win"><span class="dot"></span>입찰 → 낙찰 ✓ ₩188k · Chicago 270</div>
+      </div>
+      <div class="note">AI 가치평가(심사1) · 경쟁 입찰 A2A(심사2) · 다건 동시 진행(심사3)</div>
+    </div>
+  </div>
+  <div class="wf">
+    <div class="wf-bar"><i></i><i></i><i></i><b>③ 낙찰 · 정산 상세</b><span class="wf-tag">온체인</span></div>
+    <div class="wf-body">
+      <div class="card-item"><div class="thumb"></div><div><div style="font-weight:700;font-size:13px">Jordan 1 Chicago · 270</div><div style="font-size:11px;color:var(--text-muted)">seller-agent #07 · 낙찰</div></div></div>
+      <div>
+        <div class="kv"><span>Gemini 공정가</span><b>₩240,000</b></div>
+        <div class="kv"><span>낙찰가</span><b>₩195,000</b></div>
+        <div class="kv"><span>기대 마진</span><b style="color:var(--success)">+23%</b></div>
+      </div>
+      <div><div class="lab">에스크로 상태</div><div class="steps"><div class="s on">USDC 예치</div><div class="s on">검수</div><div class="s">릴리스</div></div></div>
+      <div class="tx"><span>Solana devnet tx</span><span>5xQ…9fA ↗</span></div>
+      <div class="note">낙찰 즉시 예치 → 검수 통과 시 자동 릴리스 (심사3 라이브 txn)</div>
+    </div>
+  </div>
+  <div class="wf">
+    <div class="wf-bar"><i></i><i></i><i></i><b>④ 결과 요약</b><span class="wf-tag">검증 실증</span></div>
+    <div class="wf-body">
+      <div class="sum"><div><b>6족</b><span>소싱 완료</span></div><div><b>94%</b><span>예산 사용</span></div><div><b>+27%</b><span>평균 마진</span></div></div>
+      <div class="lab">정산 내역</div>
+      <div class="feed">
+        <div class="fitem win"><span class="dot"></span>₩195k · tx 5xQ…9fA</div>
+        <div class="fitem win"><span class="dot"></span>₩188k · tx 7bW…2kD</div>
+      </div>
+      <div class="kill">⛔ 예산 초과 입찰 시도 → Mandate 검증 실패 → 결제 <b>거부</b><br><span style="font-weight:400">"서명이 진짜 검증되고, 실패 시 실제로 막힌다" = AP2 킬러샷</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="s10">
+<h2><span class="num">10</span>구현 우선순위 백로그</h2>
+<p>12H 안에서 순위를 흔드는 건 A2A 깊이가 아니라 AP2 과장이다. 잃을 감점(downside)부터 막고, 그다음 싼 신뢰도, 그다음 서사 강화 순.</p>
+<table>
+<thead><tr><th>순위</th><th>과제</th><th>이유</th></tr></thead>
+<tbody>
+<tr><td><span class="pill p0">P0</span></td><td>AP2 Intent/Cart Mandate 서명·검증 실구현, <code>permits()</code>에 검증-전-지출 배선</td><td>유일한 감점 리스크 제거</td></tr>
+<tr><td><span class="pill p0">P0</span></td><td>x402 nonce/expiry 강제 (replay·만료 거부)</td><td>싼 비용, 큰 신뢰도</td></tr>
+<tr><td><span class="pill p0">P0</span></td><td>낙찰→USDC 에스크로 정산 라이브(devnet) 완결</td><td>심사 3번 핵심. 데모 필수 경로</td></tr>
+<tr><td><span class="pill p1">P1</span></td><td>Gemini 가치평가(comps→공정가→최대입찰) + 그리디 낙찰</td><td>심사 1·기술완성도. 제품 차별점</td></tr>
+<tr><td><span class="pill p1">P1</span></td><td>위임형 A2A 도메인 매핑(리셀러→딜러→셀러 홉)</td><td>차별화 서사. 스펙 완성도보다 ROI 높음</td></tr>
+<tr><td><span class="pill p2">P2</span></td><td>낙찰 신발 사진 Gemini Vision 진품·상태 판독 → 자동 릴리스</td><td>Gemini 활용도 강화. 여력 시</td></tr>
+<tr><td><span class="pill p2">P2</span></td><td>판매자 proof 온체인 확인</td><td>심사 3 강화. 없어도 치명적 아님</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="s11">
+<h2><span class="num">11</span>리스크 &amp; 대응</h2>
+<table>
+<thead><tr><th>리스크</th><th>영향</th><th>대응</th></tr></thead>
+<tbody>
+<tr><td>AP2 "이름만 Mandate" 지적</td><td>기준 2 감점</td><td>P0 실구현 + 변조→거부 데모(§7 킬러샷)</td></tr>
+<tr><td>물리 재화 검수·배송 에스크로가 지저분</td><td>실행 서사 약화</td><td>MVP는 "검수 완료 플래그"로 목 처리, 온체인 서사는 "즉시정산 + 사기방지 에스크로"에 집중. 백로그로 Vision 진품판독</td></tr>
+<tr><td>데모 중 txn 실패</td><td>기준 3 치명타</td><td>정산 완결성에 리소스 집중, 검증은 MVP 목으로 단순화</td></tr>
+<tr><td>범위 드리프트(드랍 스나이핑으로 흐름)</td><td>Solana 필연성 상실</td><td>2차 시장 경매 소싱으로 못박기(§1)</td></tr>
+<tr><td>"매칭/트레이딩봇 아니냐" 혁신성 의문</td><td>기준 4 약화</td><td>Gemini 판단 + A2A 입찰 + AP2 권한체인의 자율 파이프라인으로 프레이밍</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="s12">
+<h2><span class="num">12</span>MVP 스코프 경계</h2>
+<table>
+<thead><tr><th>구성요소</th><th>MVP</th><th>방식</th></tr></thead>
+<tbody>
+<tr><td>예산·정책 에이전트</td><td>✅ 진짜</td><td>사람이 조건·한도 입력, Intent Mandate 서명</td></tr>
+<tr><td>가치평가·탐색</td><td>✅ 진짜</td><td>Gemini comps→공정가→최대입찰가</td></tr>
+<tr><td>셀러 측</td><td>✅ 얇은 목</td><td>accept/counter/reject 함수 + 매물 JSON</td></tr>
+<tr><td>자율입찰·낙찰(그리디)</td><td>✅ 진짜</td><td>최대입찰가 내 경쟁, 예산 그리디</td></tr>
+<tr><td>에스크로·정산</td><td>✅ 진짜</td><td>Solana devnet USDC, 검수는 목 플래그로 릴리스</td></tr>
+<tr><td>AP2 Mandate 검증</td><td>✅ 진짜(P0)</td><td>Intent/Cart 2단 서명·검증</td></tr>
+<tr><td>진품·상태 Vision 판독</td><td>⬜ 백로그</td><td>Gemini Vision, 여력 시</td></tr>
+</tbody>
+</table>
+</section>
+
+<hr>
+<p style="font-size:12.5px;color:var(--text-muted);margin-top:20px">신발 소싱 에이전트 &amp; 낙찰 플랫폼 · 기획 문서 v1.0 · 팀 내부용 · 2026-08-02</p>
+
+</main>
+</body>
+</html>
