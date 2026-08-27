@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가재코드 2주 후기</title>
+    <meta
+      name="description"
+      content="장기 작업용 에이전트 하네스를 2주간 써본 후기와, Claude Code CLI와의 역할 분담 정리."
+    />
+    <meta name="title" content="가재코드 2주 후기" />
+    <meta property="og:title" content="가재코드 2주 후기" />
+    <meta
+      property="og:description"
+      content="장기 작업용 에이전트 하네스를 2주간 써본 후기와, Claude Code CLI와의 역할 분담 정리."
+    />
+    <meta property="og:site_name" content="html-apps" />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="가재코드 2주 후기" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"
+    />
+
+    <style>
+      :root {
+        color-scheme: light dark;
+
+        --paper: #efeff3;
+        --surface: #ffffff;
+        --surface-2: #f7f7fa;
+        --ink: #1c1f2b;
+        --ink-2: #565b6e;
+        --ink-3: #888d9e;
+        --rule: #dbdbe3;
+        --rule-soft: #e7e7ed;
+        --accent: #c4503c;
+        --tool-cc: #4557a0;
+        --tool-gjc: #c4503c;
+        --tool-codex: #2f6f63;
+        --shadow:
+          0 1px 2px rgba(28, 31, 43, 0.05),
+          0 8px 24px -16px rgba(28, 31, 43, 0.22);
+
+        --sans:
+          "IBM Plex Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo",
+          "Malgun Gothic", sans-serif;
+        --display:
+          "Gothic A1", "IBM Plex Sans KR", system-ui, -apple-system,
+          "Apple SD Gothic Neo", sans-serif;
+        --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #15161d;
+          --surface: #1d1f28;
+          --surface-2: #24262f;
+          --ink: #e9e9f0;
+          --ink-2: #a2a6b6;
+          --ink-3: #737890;
+          --rule: #31343f;
+          --rule-soft: #282b35;
+          --accent: #e3735c;
+          --tool-cc: #8496dc;
+          --tool-gjc: #e3735c;
+          --tool-codex: #55a594;
+          --shadow:
+            0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -16px rgba(0, 0, 0, 0.7);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.75;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .wrap {
+        max-width: 60rem;
+        margin-inline: auto;
+        padding: clamp(2.5rem, 6vw, 5rem) clamp(1.15rem, 4vw, 2.5rem) 5rem;
+      }
+
+      .prose {
+        max-width: 44rem;
+      }
+
+      a {
+        color: var(--accent);
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 2px;
+      }
+
+      /* ---------- shared type ---------- */
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--display);
+        text-wrap: balance;
+        margin: 0;
+        line-height: 1.3;
+      }
+
+      /* ---------- masthead ---------- */
+      .masthead {
+        border-top: 3px solid var(--ink);
+        padding-top: 1.5rem;
+      }
+
+      .badge {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        border: 1px solid currentColor;
+        border-radius: 2px;
+        padding: 0.18rem 0.5rem;
+        line-height: 1.4;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 6vw, 3.15rem);
+        font-weight: 900;
+        letter-spacing: -0.022em;
+        margin: 1rem 0 0.85rem;
+      }
+
+      .deck {
+        font-size: clamp(1rem, 2.1vw, 1.15rem);
+        color: var(--ink-2);
+        max-width: 40rem;
+        margin: 0;
+      }
+
+      .byline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.95rem;
+        align-items: center;
+        margin-top: 1.9rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--rule);
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--ink-3);
+      }
+
+      /* ---------- tl;dr ---------- */
+      .tldr {
+        margin-top: 2.75rem;
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 3px;
+        box-shadow: var(--shadow);
+        padding: clamp(1.35rem, 3.5vw, 2rem);
+      }
+      .tldr > .mono {
+        color: var(--ink-3);
+        display: block;
+        margin-bottom: 1.15rem;
+      }
+
+      .tldr ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+        counter-reset: tl;
+      }
+      /* 마커는 absolute로 띄운다 — li를 grid로 만들면 텍스트 조각과 <b>가
+     각각 별개의 grid item이 되어 열이 어긋난다. */
+      .tldr li {
+        counter-increment: tl;
+        position: relative;
+        padding-left: 2.4rem;
+      }
+      .tldr li::before {
+        content: counter(tl);
+        position: absolute;
+        left: 0;
+        top: 0.32rem;
+        width: 1.6rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--accent);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 0.18rem;
+        text-align: center;
+      }
+      .tldr li b {
+        font-weight: 700;
+      }
+
+      /* ---------- sections ---------- */
+      section {
+        margin-top: clamp(3.25rem, 7vw, 4.75rem);
+      }
+
+      .sec-head {
+        display: flex;
+        align-items: baseline;
+        gap: 0.9rem;
+        border-bottom: 1px solid var(--rule);
+        padding-bottom: 0.7rem;
+        margin-bottom: 1.9rem;
+      }
+      .sec-head h2 {
+        font-size: clamp(1.3rem, 3.2vw, 1.6rem);
+        font-weight: 800;
+        letter-spacing: -0.012em;
+      }
+      .sec-head .eyebrow {
+        margin-left: auto;
+        white-space: nowrap;
+      }
+
+      .note {
+        color: var(--ink-2);
+        font-size: 0.93rem;
+        margin: 1.4rem 0 0;
+      }
+
+      /* ---------- A. role split ---------- */
+      .lanes {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr 1fr;
+      }
+      @media (max-width: 720px) {
+        .lanes {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .lane {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-top: 3px solid var(--tool);
+        border-radius: 3px;
+        box-shadow: var(--shadow);
+        padding: 1.4rem 1.4rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+      .lane--cc {
+        --tool: var(--tool-cc);
+      }
+      .lane--gjc {
+        --tool: var(--tool-gjc);
+      }
+
+      .lane-name {
+        font-family: var(--display);
+        font-size: 1.22rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--tool);
+        line-height: 1.35;
+      }
+      .lane-sub {
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        color: var(--ink-3);
+        letter-spacing: 0.02em;
+        margin-top: -0.35rem;
+      }
+      .lane-role {
+        font-size: 1.02rem;
+        font-weight: 600;
+        line-height: 1.6;
+      }
+      .lane-why {
+        font-size: 0.9rem;
+        color: var(--ink-2);
+        border-top: 1px dashed var(--rule);
+        padding-top: 0.8rem;
+        margin-top: auto;
+      }
+      .lane-why b {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .lane-foot {
+        margin-top: 1rem;
+        background: var(--surface-2);
+        border: 1px solid var(--rule-soft);
+        border-radius: 3px;
+        padding: 1rem 1.25rem;
+        font-size: 0.92rem;
+        color: var(--ink-2);
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.35rem 0.9rem;
+        align-items: baseline;
+      }
+      .lane-foot .tag {
+        color: var(--tool-codex);
+        border-color: currentColor;
+      }
+
+      .tag {
+        display: inline-block;
+        vertical-align: 0.1em;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border: 1px solid var(--rule);
+        border-radius: 2px;
+        padding: 0.12rem 0.42rem;
+        white-space: nowrap;
+        line-height: 1.5;
+      }
+
+      /* ---------- B. pros / cons ---------- */
+      .pc {
+        display: grid;
+        gap: 1.6rem 1.5rem;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+      }
+      @media (max-width: 720px) {
+        .pc {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .pc-col {
+        display: grid;
+        gap: 0.7rem;
+        align-content: start;
+      }
+
+      .pc-head {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding-bottom: 0.55rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .pc-sign {
+        font-family: var(--mono);
+        font-size: 1rem;
+        font-weight: 600;
+        width: 1.45rem;
+        height: 1.45rem;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        line-height: 1;
+      }
+      .pc-head--pro .pc-sign {
+        background: var(--ink);
+        color: var(--surface);
+      }
+      .pc-title {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: 1.02rem;
+      }
+      .pc-count {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--ink-3);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .item {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 3px;
+        padding: 0.95rem 1.1rem 1rem;
+      }
+      .pc-col--con .item {
+        border-style: dashed;
+        background: transparent;
+      }
+
+      .item h3 {
+        font-size: 0.98rem;
+        font-weight: 700;
+        line-height: 1.55;
+      }
+      .item p {
+        margin: 0.5rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.7;
+        color: var(--ink-2);
+      }
+      .item p .ex {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-right: 0.3rem;
+      }
+      .tag--felt {
+        color: var(--accent);
+        border-color: currentColor;
+      }
+      code {
+        font-family: var(--mono);
+        font-size: 0.84em;
+        background: var(--surface-2);
+        border: 1px solid var(--rule-soft);
+        border-radius: 2px;
+        padding: 0.06em 0.32em;
+      }
+
+      /* ---------- C. timeline ---------- */
+      .tl {
+        display: grid;
+        gap: 0;
+        counter-reset: step;
+      }
+
+      .step {
+        counter-increment: step;
+        display: grid;
+        grid-template-columns: 2.5rem 1fr;
+        gap: 0 1.15rem;
+        padding-bottom: 1.5rem;
+      }
+      .step:last-child {
+        padding-bottom: 0;
+      }
+
+      .step-rail {
+        position: relative;
+        display: grid;
+        justify-items: center;
+      }
+      .step-dot {
+        width: 2rem;
+        height: 2rem;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        border: 1px solid var(--rule);
+        background: var(--surface);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--ink-2);
+        z-index: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .step-dot::before {
+        content: counter(step);
+      }
+      .step-rail::after {
+        content: "";
+        position: absolute;
+        top: 2rem;
+        bottom: -1.5rem;
+        width: 1px;
+        background: var(--rule);
+      }
+      .step:last-child .step-rail::after {
+        display: none;
+      }
+
+      .step--pivot .step-dot {
+        border-style: dashed;
+        border-color: var(--ink-3);
+        color: var(--ink-3);
+      }
+      .step--pivot .step-dot::before {
+        content: "↯";
+        font-size: 1rem;
+      }
+      .step--now .step-dot {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .step-body {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 3px;
+        padding: 0.95rem 1.15rem 1.05rem;
+      }
+      .step--pivot .step-body {
+        background: transparent;
+        border-style: dashed;
+      }
+      .step--now .step-body {
+        border-color: var(--accent);
+        box-shadow: var(--shadow);
+      }
+
+      .step-title {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: 1rem;
+      }
+      .step--now .step-title {
+        color: var(--accent);
+      }
+      .step-body p {
+        margin: 0.45rem 0 0;
+        font-size: 0.885rem;
+        color: var(--ink-2);
+        line-height: 1.7;
+      }
+      .step-body ul {
+        margin: 0.5rem 0 0;
+        padding-left: 1.05rem;
+        font-size: 0.865rem;
+        color: var(--ink-2);
+      }
+      .step-body li {
+        margin-top: 0.18rem;
+      }
+
+      /* ---------- D. decision flow ---------- */
+      .flow-q {
+        background: var(--ink);
+        color: var(--paper);
+        border-radius: 3px;
+        padding: 1rem 1.25rem;
+        text-align: center;
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 1.02rem;
+      }
+      .flow-arrow {
+        display: block;
+        text-align: center;
+        color: var(--ink-3);
+        font-size: 1.15rem;
+        line-height: 1;
+        padding: 0.7rem 0;
+      }
+      .branches {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+      }
+      @media (max-width: 780px) {
+        .branches {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .branch {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 3px;
+        padding: 1.1rem 1.15rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+      .branch--cc {
+        --tool: var(--tool-cc);
+      }
+      .branch--gjc {
+        --tool: var(--tool-gjc);
+      }
+
+      .branch-when {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .branch-tool {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: var(--tool);
+        line-height: 1.4;
+      }
+      .branch p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--ink-2);
+        line-height: 1.7;
+      }
+
+      .rationale {
+        margin-top: 1.75rem;
+        display: grid;
+        gap: 0.75rem;
+        padding: 0;
+        list-style: none;
+      }
+      .rationale li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.75rem;
+        align-items: baseline;
+        font-size: 0.92rem;
+        color: var(--ink-2);
+      }
+      .rationale li::before {
+        content: "→";
+        font-family: var(--mono);
+        color: var(--accent);
+      }
+
+      footer {
+        margin-top: 4rem;
+        padding-top: 1.1rem;
+        border-top: 1px solid var(--rule);
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        color: var(--ink-3);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="masthead">
+        <span class="badge">개발 노트</span>
+        <h1>가재코드 2주 후기</h1>
+        <p class="deck">
+          장기 작업용 에이전트 하네스를 2주간 써보고 남은 것, 그리고 Codex
+          요금제가 다시 열리면서 도구를 어떻게 나눠 쓰기로 했는지.
+        </p>
+        <div class="byline">
+          <span>2026-08-21</span>
+        </div>
+      </header>
+
+      <div class="tldr">
+        <span class="mono">3줄 요약</span>
+        <ol>
+          <li>
+            GJC는 <b>장기·다단계 작업에서 확실히 편했지만</b>, 같은 작업 기준
+            토큰 소모가 커서 한도에 훨씬 빨리 닿음.
+          </li>
+          <li>
+            쓸 수 있는 <b>Codex 요금제가 다시 상향</b>됨. 그동안 GUI 불편 때문에
+            소극적으로 쓰던 Codex를 다시 끌어올 수 있게 됨.
+          </li>
+          <li>
+            그래서
+            <b
+              >중간 크기 작업은 Claude Code CLI, 장기 구현 작업은 GJC(default
+              model: codex pro)</b
+            >로 나눠 쓰려고 함.
+          </li>
+        </ol>
+      </div>
+
+      <section>
+        <div class="sec-head">
+          <h2>결론부터 — 도구 역할 분담</h2>
+          <span class="eyebrow">Plan</span>
+        </div>
+
+        <div class="lanes">
+          <div class="lane lane--cc">
+            <div class="lane-name">Claude Code CLI</div>
+            <div class="lane-sub">주력 · 그대로 유지</div>
+            <div class="lane-role">
+              중간 크기의 작업, 기타 범용 Agent 관리 작업
+            </div>
+            <div class="lane-why">
+              <b>왜</b>내장 기능과 세팅해둔 skill이 전부 그대로 동작해서 drift가
+              없고, 사소한 수정 회전이 빠름.
+            </div>
+          </div>
+          <div class="lane lane--gjc">
+            <div class="lane-name">GJC</div>
+            <div class="lane-sub">default model — codex pro</div>
+            <div class="lane-role">장기 구현 작업 위주</div>
+            <div class="lane-why">
+              <b>왜</b>ralplan·ultragoal 같은 장기 작업 스킬이 강점. 토큰 소모가
+              큰 만큼, 압박이 덜한 Codex 쪽에 물려서 상쇄.
+            </div>
+          </div>
+        </div>
+
+        <div class="lane-foot">
+          <span class="tag">Codex</span>
+          <span
+            >단독 GUI로 쓰기보다 <strong>GJC의 기본 모델</strong>로 들어감.
+            Claude에서 reviewer로 호출하던 용도는 그대로 유지.</span
+          >
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <h2>가재코드 2주 사용 후기</h2>
+          <span class="eyebrow">Review</span>
+        </div>
+
+        <div class="pc">
+          <div class="pc-col pc-col--pro">
+            <div class="pc-head pc-head--pro">
+              <span class="pc-sign" aria-hidden="true">+</span>
+              <span class="pc-title">좋았던 점</span>
+              <span class="pc-count">3</span>
+            </div>
+
+            <div class="item">
+              <h3>멀티 모델을 한 세션에서 쓸 수 있음</h3>
+              <p>
+                <span class="ex">ex.</span>작업 중간에 Claude → Codex로 넘어갈
+                수 있음.
+              </p>
+            </div>
+
+            <div class="item">
+              <h3>반복되는 패턴을 알아서 적용해줌</h3>
+              <p>
+                자가개선 효능감이 plain Claude Code CLI보다 잘 느껴짐. 컨텍스트
+                중간에 따로 skill을 만드느라 맥락을 흐리지 않아도 됨.
+              </p>
+              <p>
+                <span class="ex">ex.</span>FE 개발 → 구현 → 리뷰 →
+                <strong>최종 결과화면 스크린샷 코멘트 업로드</strong>. 반복
+                프롬프트 없이 2회 이상 쓰면 자동으로 진행함.
+              </p>
+            </div>
+
+            <div class="item">
+              <h3><code>/handoff</code>가 편함</h3>
+              <p>알아서 handoff하고 세션을 새로 시작해줌.</p>
+            </div>
+          </div>
+
+          <div class="pc-col pc-col--con">
+            <div class="pc-head">
+              <span class="pc-sign" aria-hidden="true">−</span>
+              <span class="pc-title">걸렸던 점</span>
+              <span class="pc-count">4</span>
+            </div>
+
+            <div class="item">
+              <h3>사소한 수정도 러닝타임이 길어 전체 과정이 늘어짐</h3>
+              <p>
+                <span class="ex">ex.</span>기능 추가 → GJC로 장기 작업 구현 →
+                자체 QA 후 P5급 수정 한 건 요청 → 5분 소요. 개입해서 디테일을
+                올리는 후반 작업에서 특히 답답함.
+              </p>
+            </div>
+
+            <div class="item">
+              <h3>MCP 연결 세팅을 새로 해야 함</h3>
+              <p>
+                쓰던 MCP 서버를 프롬프트에 분명히 요청해뒀는데도 별도 세팅
+                단계를 생략함. 그 결과 이후 과정에서 전부 누락됨.
+              </p>
+            </div>
+
+            <div class="item">
+              <h3>Claude Code 내장 기능·기존 skill을 전부 지원하지는 않음</h3>
+              <p>
+                그만큼 drift가 생김. <span class="ex">ex.</span
+                ><code>grill-me</code>, <code>ultracode</code>,
+                <code>model</code> → 없거나 조금 다름.
+              </p>
+            </div>
+
+            <div class="item">
+              <h3>토큰 소모가 큼 <span class="tag tag--felt">체감</span></h3>
+              <p>
+                비슷한 작업 기준 Claude Code CLI로 쓸 때보다
+                <strong>2~3시간 빨리 limit에 도달</strong>. 특히
+                ralplan·ultragoal처럼 GJC의 특장점으로 소개되는 내장 스킬을 쓸
+                때 차이가 확 느껴짐.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p class="note prose">
+          ※ 토큰 소모 수치는 계측값이 아니라 2주간 써보며 느낀 체감치임.
+        </p>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <h2>Codex 사용 패턴 — 지난 2개월</h2>
+          <span class="eyebrow">Timeline</span>
+        </div>
+
+        <div class="tl">
+          <div class="step">
+            <div class="step-rail"><span class="step-dot"></span></div>
+            <div class="step-body">
+              <div class="step-title">
+                적극적 사용기 <span class="tag">CLI 주력 + GUI 보조</span>
+              </div>
+              <p>
+                Claude Code CLI(주력) + Codex GUI(보조) 조합으로 써왔으나, Codex
+                GUI에서 다음 불편이 반복됨.
+              </p>
+              <ul>
+                <li>MCP 연동이 끊김</li>
+                <li>대화 기록 꼬임 / history 관리 불편</li>
+                <li>Claude에서 마이그레이션한 skill 꼬임</li>
+                <li>GitHub 연동 끊김</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step step--pivot">
+            <div class="step-rail"><span class="step-dot"></span></div>
+            <div class="step-body">
+              <div class="step-title">
+                전환점 <span class="tag">환경 변화</span>
+              </div>
+              <p>
+                쓸 수 있는 <strong>Codex 요금제가 크게 축소</strong>됨. 같은
+                시기에 Claude Code CLI의 browser use agent 지원이 강화됨.
+              </p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-rail"><span class="step-dot"></span></div>
+            <div class="step-body">
+              <div class="step-title">
+                소극적 사용기 <span class="tag">주 2회</span>
+              </div>
+              <p>
+                Claude Code 요금제를 다 썼을 때만 쓰거나, Claude에서 reviewer로
+                호출하는 정도. 일주일에 2회 남짓.
+              </p>
+            </div>
+          </div>
+
+          <div class="step step--now">
+            <div class="step-rail"><span class="step-dot"></span></div>
+            <div class="step-body">
+              <div class="step-title">
+                지금 <span class="tag">다시 상향</span>
+              </div>
+              <p>
+                쓸 수 있는 <strong>Codex 요금제가 다시 상향</strong>됨. 여기에
+                2주간의 GJC 경험이 겹치면서, 아래 조합을 잡게 됨.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <h2>앞으로 — 작업 유형별 선택 기준</h2>
+          <span class="eyebrow">How to pick</span>
+        </div>
+
+        <div class="flow-q">이 작업, 어느 정도 크기인가?</div>
+        <span class="flow-arrow" aria-hidden="true">▼</span>
+
+        <div class="branches">
+          <div class="branch branch--cc">
+            <div class="branch-when">짧음 · 사소한 수정</div>
+            <div class="branch-tool">Claude Code CLI</div>
+            <p>
+              GJC는 P5급 수정 한 건에도 5분이 걸림. 짧은 작업을 태우면 손해.
+            </p>
+          </div>
+          <div class="branch branch--cc">
+            <div class="branch-when">중간 · 범용 Agent 관리</div>
+            <div class="branch-tool">Claude Code CLI</div>
+            <p>내장 기능과 세팅해둔 skill이 그대로 동작해서 drift가 없음.</p>
+          </div>
+          <div class="branch branch--gjc">
+            <div class="branch-when">장기 · 다단계 구현</div>
+            <div class="branch-tool">
+              GJC <span class="branch-when">default: codex pro</span>
+            </div>
+            <p>
+              ralplan·ultragoal이 살아나는 구간. 토큰 부담은 Codex 쪽으로 넘김.
+            </p>
+          </div>
+        </div>
+
+        <ul class="rationale prose">
+          <li>
+            Codex에서 plugin 사용이 아쉬웠던 부분을 GJC가 보충해줄 수 있다고 봄.
+          </li>
+          <li>
+            GJC는 동일 작업 기준 토큰 소모가 크다고 느끼는데, 상대적으로 토큰
+            압박이 적은 Codex로 연결하면 그 부분이 보완될 것이라 생각함.
+          </li>
+          <li>
+            결과적으로 Claude Code CLI의 한도는 중·소 작업에 아끼고, 장기 작업의
+            부담은 Codex 쪽으로 분산하는 그림.
+          </li>
+        </ul>
+      </section>
+
+      <footer>
+        <span>가재코드 2주 후기</span>
+        <span>2026-08-21</span>
+      </footer>
+    </div>
+  </body>
+</html>
